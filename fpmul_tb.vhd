@@ -89,20 +89,20 @@ begin
 	z_del <= unsigned(z_del_aux);
 
 	-- Verificacion de la condicion
-	verificacion: process(clk)
+	verificacion: process
 	begin
-		if rising_edge(clk) then
---			report integer'image(to_integer(a_file)) & " " & integer'image(to_integer(b_file)) & " " & integer'image(to_integer(z_file));
-			assert to_integer(z_del) = to_integer(z_dut) report
-				"Error: Salida del DUT no coincide con referencia (salida del dut = " & 
-				integer'image(to_integer(z_dut)) &
-				", salida del archivo = " &
-				integer'image(to_integer(z_del)) & ")"
-				severity warning;
-			if to_integer(z_del) /= to_integer(z_dut) then
-				errores <= errores + 1;
-			end if;
-		end if;
+        wait for TCK * 3/4;
+        report integer'image(to_integer(a_file)) & " " & integer'image(to_integer(b_file)) & " " & integer'image(to_integer(z_file));
+        assert to_integer(z_del) = to_integer(z_dut) report
+            "Error: Salida del DUT no coincide con referencia (salida del dut = " &
+            integer'image(to_integer(z_dut)) &
+            ", salida del archivo = " &
+            integer'image(to_integer(z_del)) & ")"
+            severity error;
+        if to_integer(z_del) /= to_integer(z_dut) then
+            errores <= errores + 1;
+        end if;
+        wait for TCK * 1/4;
 	end process;
 
 end architecture fpmul_tb_arq;

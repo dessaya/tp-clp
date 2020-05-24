@@ -116,19 +116,19 @@ begin
         -- p_frac_inter is (2NP + 1 downto 0) (must discard down to NP)
 
         if p_frac_inter(2 * NP + 1) = '1' then
-            p_frac <= p_frac_inter(2 * NP downto NP);
+            p_frac <= p_frac_inter(2 * NP downto NP + 1);
             p_exp <= p_exp_plus_1;
         else
-            p_frac <= p_frac_inter(2 * NP - 1 downto NP - 1);
+            p_frac <= p_frac_inter(2 * NP - 1 downto NP);
             p_exp <= p_exp_inter;
         end if;
 
         if p_exp_inter(E) = '1' then
-            report "overflow!";
+            -- report "overflow!";
             p_exp <= (0 => '0', others => '1');
             p_frac <= (others => '1');
         elsif and_reduce(p_exp(E - 1 downto 0)) = '1' then
-            report "inf!";
+            -- report "inf!";
             p_exp <= (0 => '0', others => '1');
             p_frac <= (others => '1');
         end if;

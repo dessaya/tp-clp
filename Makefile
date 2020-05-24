@@ -18,7 +18,8 @@ $(TEST_ENTITY): $(OBJ)
 	ghdl -e $(TEST_ENTITY)
 
 $(WAVE_FILE): $(TEST_ENTITY)
-	ghdl -r $(TEST_ENTITY) --vcd=$(WAVE_FILE) --stop-time=1000ns --disp-time --disp-tree=port
+	ghdl -r $(TEST_ENTITY) --vcd=$(WAVE_FILE) --assert-level=error
+	#  --disp-tree=port  --stop-time=30ns
 
 view: $(WAVE_FILE)
 	gtkwave $(WAVE_FILE)
