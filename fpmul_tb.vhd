@@ -3,10 +3,10 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use std.textio.all;
 
-entity PF_testbench is
-end entity PF_testbench;
+entity fpmul_tb is
+end entity fpmul_tb;
 
-architecture PF_testbench_arq of PF_testbench is
+architecture fpmul_tb_arq of fpmul_tb is
 	constant TCK: time:= 20 ns; 		-- periodo de reloj
 	constant DELAY: natural:= 0; 		-- retardo de procesamiento del DUT
 	constant WORD_SIZE_T: natural:= 25;	-- tamaño de datos
@@ -25,7 +25,7 @@ architecture PF_testbench_arq of PF_testbench is
 	-- La senal z_del_aux se define por un problema de conversión
 	signal z_del_aux: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
 
-	file datos: text open read_mode is "../test_mul_float_25_7.txt";
+	file datos: text open read_mode is "./test-files/test_mul_float_25_7.txt";
 
 	-- Declaracion de la linea de retardo
 	component delay_gen is
@@ -105,4 +105,4 @@ begin
 		end if;
 	end process;
 
-end architecture PF_testbench_arq; 
+end architecture fpmul_tb_arq;

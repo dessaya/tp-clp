@@ -85,8 +85,8 @@ begin
     add1: entity work.addern
         generic map (N => E)
         port map(
-            a => a_frac,
-            b => b_frac,
+            a => a_exp,
+            b => b_exp,
             cin => '0',
             s => add1_s,
             cout => add1_c

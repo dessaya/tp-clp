@@ -18,7 +18,7 @@ architecture addern_arq of addern is
     signal c: std_logic_vector(N downto 0);
 begin
     adders: for i in N - 1 downto 0 generate
-        adder1: entity work.adder1(sum1b_arq)
+        adder1: entity work.adder1
             port map(
                 a => a(i),
                 b => b(i),
