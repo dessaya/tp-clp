@@ -32,17 +32,17 @@ begin
     c(0) <= cin;
     cout <= c(N);
 
-    process is begin
-        wait for 15 ns;
-        if (s /= (std_logic_vector(unsigned(a) + unsigned(b) + unsigned'('0'&cin)))) then
-            report "a = 0b" & to_string(a);
-            report "b = 0b" & to_string(b);
-            report "c = 0b" & to_string(cin);
-            report "s = 0b" & to_string(s);
-            report "+ = 0b" & to_string(unsigned(a) + unsigned(b));
-            report "";
-        end if;
-        wait for 5 ns;
-    end process;
+    -- process is begin
+    --     wait for 15 ns;
+    --     if (s /= (std_logic_vector(unsigned(a) + unsigned(b) + unsigned'('0'&cin)))) then
+    --         report "a = 0b" & to_string(a);
+    --         report "b = 0b" & to_string(b);
+    --         report "c = 0b" & to_string(cin);
+    --         report "s = 0b" & to_string(s);
+    --         report "+ = 0b" & to_string(unsigned(a) + unsigned(b));
+    --         report "";
+    --     end if;
+    --     wait for 5 ns;
+    -- end process;
 end;
 

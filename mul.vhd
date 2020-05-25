@@ -50,15 +50,15 @@ begin
     p(0) <= a(0) and b(0);
     p(2 * N - 1 downto N) <= ac(N - 1) & as(N - 1)(N - 1 downto 1);
 
-    process is begin
-        wait for 15 ns;
-        if (p /= (std_logic_vector(unsigned(a) * unsigned(b)))) then
-            report "a = 0b" & to_string(a);
-            report "b = 0b" & to_string(b);
-            report "p = 0b" & to_string(p);
-            report "* = 0b" & to_string(unsigned(a) * unsigned(b));
-            report "";
-        end if;
-        wait for 5 ns;
-    end process;
+    -- process is begin
+    --     wait for 15 ns;
+    --     if (p /= (std_logic_vector(unsigned(a) * unsigned(b)))) then
+    --         report "a = 0b" & to_string(a);
+    --         report "b = 0b" & to_string(b);
+    --         report "p = 0b" & to_string(p);
+    --         report "* = 0b" & to_string(unsigned(a) * unsigned(b));
+    --         report "";
+    --     end if;
+    --     wait for 5 ns;
+    -- end process;
 end;

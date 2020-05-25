@@ -39,7 +39,28 @@ architecture fpmul_arq of fpmul is
     signal p_exp_plus_1: std_logic_vector(E downto 0);
 
     constant bias: integer := 2 ** (E - 1) - 1;
+    constant e_max: integer := bias;
+    constant e_min: integer := -bias + 1;
     constant minus_bias: std_logic_vector(E downto 0) := std_logic_vector(to_signed(-bias, E + 1));
+
+    procedure check(
+        signal exp: in std_logic_vector(E downto 0);
+        signal p_sign: out std_logic;
+        signal p_exp: out std_logic_vector(E downto 0);
+        signal p_frac: out std_logic_vector(NP - 1 downto 0)
+    ) is begin
+        p_sign <= a_sign xor b_sign;
+        if to_integer(signed(exp) - bias) > e_max then
+            -- report "overflow!";
+            p_exp <= (0 => '0', others => '1');
+            p_frac <= (others => '1');
+        elsif to_integer(signed(exp) - bias) < e_min then
+            -- report "underflow!";
+            p_sign <= '0';
+            p_exp <= (others => '0');
+            p_frac <= (others => '0');
+        end if;
+    end procedure;
 
 begin
     -- sign                    fraction/significand/mantissa (NP bits)
@@ -61,9 +82,6 @@ begin
     -- extract mantissas, adding the implicit 1.
     a_frac <= '1' & a(NP - 1 downto 0);
     b_frac <= '1' & b(NP - 1 downto 0);
-
-    -- determine the sign of the product
-    p_sign <= a_sign xor b_sign;
 
     -- product of fractions has length 2NP + 2; is either 01.xxx or 10.xxx
     mul: entity work.mul
@@ -109,28 +127,34 @@ begin
         -- p_frac_inter is (2NP + 1 downto 0) (must discard down to NP)
 
         if p_frac_inter(2 * NP + 1) = '1' then
+            -- report "shift";
             p_frac <= p_frac_inter(2 * NP downto NP + 1);
             p_exp <= p_exp_plus_1;
+            check(p_exp_plus_1, p_sign, p_exp, p_frac);
         else
+            -- report "no shift";
             p_frac <= p_frac_inter(2 * NP - 1 downto NP);
             p_exp <= p_exp_inter;
-        end if;
-
-        if p_exp_inter(E) = '1' then
-            -- report "overflow!";
-            p_exp <= (0 => '0', others => '1');
-            p_frac <= (others => '1');
-        elsif and p_exp(E - 1 downto 0) = '1' then
-            -- report "inf!";
-            p_exp <= (0 => '0', others => '1');
-            p_frac <= (others => '1');
+            check(p_exp_inter, p_sign, p_exp, p_frac);
         end if;
     end process;
 
-    -- process (p_frac_inter) is begin
+    -- process is begin
+    --     wait for 14 ns;
+    --     report "a_sign = " & to_string(a_sign);
+    --     report "b_sign = " & to_string(b_sign);
+    --     report "p_sign = " & to_string(p_sign);
+    --     report "";
+    --     report "a_exp = 0b" & to_string(a_exp) & " (" & to_string(to_integer(signed(a_exp) - bias)) & ")";
+    --     report "b_exp = 0b" & to_string(b_exp) & " (" & to_string(to_integer(signed(b_exp) - bias)) & ")";
+    --     report "p_exp_inter = 0b" & to_string(p_exp_inter) & " (" & to_string(to_integer(signed(p_exp_inter) - 127)) & ")";
+    --     report "p_exp_plus_1 = 0b" & to_string(p_exp_plus_1) & " (" & to_string(to_integer(signed(p_exp_plus_1) - 127)) & ")";
+    --     report "";
     --     report "a_frac = 0b" & to_string(a_frac);
     --     report "b_frac = 0b" & to_string(b_frac);
     --     report "p_frac_inter = 0b" & to_string(p_frac_inter);
+    --     report "";
+    --     wait for 6 ns;
     -- end process;
 
     p(N - 1) <= p_sign;

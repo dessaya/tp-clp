@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.std_logic_textio.all;
 use IEEE.numeric_std.all;
 use std.textio.all;
 
@@ -13,19 +14,19 @@ architecture fpmul_tb_arq of fpmul_tb is
 	constant EXP_SIZE_T: natural:= 7;   -- tamaño exponente
 
 	signal clk: std_logic:= '0';
-	signal a_file: unsigned(WORD_SIZE_T-1 downto 0):= (others => '0');
-	signal b_file: unsigned(WORD_SIZE_T-1 downto 0):= (others => '0');
-	signal z_file: unsigned(WORD_SIZE_T-1 downto 0):= (others => '0');
-	signal z_del: unsigned(WORD_SIZE_T-1 downto 0):= (others => '0');
-	signal z_dut: unsigned(WORD_SIZE_T-1 downto 0):= (others => '0');
+	signal a_file: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
+	signal b_file: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
+	signal z_file: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
+	signal z_del: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
+	signal z_dut: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
 
-	signal ciclos: integer := 0;
-	signal errores: integer := 0;
+	signal ciclos: natural := 0;
+	signal errores: natural := 0;
 
 	-- La senal z_del_aux se define por un problema de conversión
 	signal z_del_aux: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
 
-	file datos: text open read_mode is "./test-files/test_mul_float_25_7.txt";
+	file datos: text open read_mode is "./test-files/test_mul_float_"&to_string(WORD_SIZE_T)&"_"&to_string(EXP_SIZE_T)&"_bin.txt";
 
 	-- Declaracion de la linea de retardo
 	component delay_gen is
@@ -39,7 +40,6 @@ architecture fpmul_tb_arq of fpmul_tb is
 			B: out std_logic_vector(N-1 downto 0)
 		);
 	end component;
-
 begin
 	-- Generacion del clock del sistema
 	clk <= not(clk) after TCK/ 2; -- reloj
@@ -47,20 +47,33 @@ begin
 	Test_Sequence: process
 		variable l: line;
 		variable ch: character:= ' ';
-		variable aux: integer;
+        variable i : integer := WORD_SIZE_T - 1;
 	begin
 		while not(endfile(datos)) loop 		-- si se quiere leer de stdin se pone "input"
 			wait until rising_edge(clk);
 			ciclos <= ciclos + 1;			-- solo para debugging
-			readline(datos, l); 			-- se lee una linea del archivo de valores de prueba
-			read(l, aux); 					-- se extrae un entero de la linea
-			a_file <= to_unsigned(aux, WORD_SIZE_T); 	-- se carga el valor del operando A
-			read(l, ch); 					-- se lee un caracter (es el espacio)
-			read(l, aux); 					-- se lee otro entero de la linea
-			b_file <= to_unsigned(aux, WORD_SIZE_T); 	-- se carga el valor del operando B
-			read(l, ch); 					-- se lee otro caracter (es el espacio)
-			read(l, aux); 					-- se lee otro entero
-			z_file <= to_unsigned(aux, WORD_SIZE_T); 	-- se carga el valor de salida (resultado)
+			readline(datos, l);
+            i := WORD_SIZE_T - 1;
+            while i >= 0 loop
+                read(l, ch);
+                next when ch /= '1' and ch /= '0';
+                a_file(i) <= '1' when ch = '1' else '0';
+                i := i - 1;
+            end loop;
+            i := WORD_SIZE_T - 1;
+            while i >= 0 loop
+                read(l, ch);
+                next when ch /= '1' and ch /= '0';
+                b_file(i) <= '1' when ch = '1' else '0';
+                i := i - 1;
+            end loop;
+            i := WORD_SIZE_T - 1;
+            while i >= 0 loop
+                read(l, ch);
+                next when ch /= '1' and ch /= '0';
+                z_file(i) <= '1' when ch = '1' else '0';
+                i := i - 1;
+            end loop;
 		end loop;
 
 		file_close(datos);		-- se cierra del archivo
@@ -78,7 +91,7 @@ begin
 			port map(
 				a => std_logic_vector(a_file),
 				b => std_logic_vector(b_file),
-				unsigned(p) => z_dut
+				p => z_dut
 			);
 
 	-- Instanciacion de la linea de retardo
@@ -86,20 +99,20 @@ begin
 			generic map(WORD_SIZE_T, DELAY)
 			port map(clk, std_logic_vector(z_file), z_del_aux);
 
-	z_del <= unsigned(z_del_aux);
+	z_del <= z_del_aux;
 
 	-- Verificacion de la condicion
 	verificacion: process
 	begin
         wait for TCK * 3/4;
-        report integer'image(to_integer(a_file)) & " " & integer'image(to_integer(b_file)) & " " & integer'image(to_integer(z_file));
-        assert to_integer(z_del) = to_integer(z_dut) report
-            "Error: Salida del DUT no coincide con referencia (salida del dut = " &
-            integer'image(to_integer(z_dut)) &
-            ", salida del archivo = " &
-            integer'image(to_integer(z_del)) & ")"
+        report "TEST: " & to_hstring(a_file) & " * " & to_hstring(b_file) & " = " & to_hstring(z_file);
+        assert z_del = z_dut report
+            "Error: Salida del DUT no coincide con referencia (esperado = " &
+            to_string(z_del) &
+            ", dut = " &
+            to_string(z_dut) & ")"
             severity error;
-        if to_integer(z_del) /= to_integer(z_dut) then
+        if z_del /= z_dut then
             errores <= errores + 1;
         end if;
         wait for TCK * 1/4;
