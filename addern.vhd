@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
 
 entity addern is
     generic (
@@ -17,7 +18,7 @@ end;
 architecture addern_arq of addern is
     signal c: std_logic_vector(N downto 0);
 begin
-    adders: for i in N - 1 downto 0 generate
+    adders: for i in 0 to N - 1 generate
         adder1: entity work.adder1
             port map(
                 a => a(i),
@@ -30,5 +31,18 @@ begin
     end generate;
     c(0) <= cin;
     cout <= c(N);
+
+    process is begin
+        wait for 15 ns;
+        if (s /= (std_logic_vector(unsigned(a) + unsigned(b) + unsigned'('0'&cin)))) then
+            report "a = 0b" & to_string(a);
+            report "b = 0b" & to_string(b);
+            report "c = 0b" & to_string(cin);
+            report "s = 0b" & to_string(s);
+            report "+ = 0b" & to_string(unsigned(a) + unsigned(b));
+            report "";
+        end if;
+        wait for 5 ns;
+    end process;
 end;
 

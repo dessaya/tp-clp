@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.std_logic_textio.all;
 use IEEE.numeric_std.all;
 
 entity fpmul is
@@ -40,14 +41,6 @@ architecture fpmul_arq of fpmul is
     constant bias: integer := 2 ** (E - 1) - 1;
     constant minus_bias: std_logic_vector(E downto 0) := std_logic_vector(to_signed(-bias, E + 1));
 
-    function and_reduce(v: in std_logic_vector) return std_logic is
-        variable r: std_logic := '1';
-    begin
-        for i in v'range loop
-            r := r and v(i);
-        end loop;
-        return r;
-    end function;
 begin
     -- sign                    fraction/significand/mantissa (NP bits)
     --  |                      /                                     \
@@ -127,12 +120,18 @@ begin
             -- report "overflow!";
             p_exp <= (0 => '0', others => '1');
             p_frac <= (others => '1');
-        elsif and_reduce(p_exp(E - 1 downto 0)) = '1' then
+        elsif and p_exp(E - 1 downto 0) = '1' then
             -- report "inf!";
             p_exp <= (0 => '0', others => '1');
             p_frac <= (others => '1');
         end if;
     end process;
+
+    -- process (p_frac_inter) is begin
+    --     report "a_frac = 0b" & to_string(a_frac);
+    --     report "b_frac = 0b" & to_string(b_frac);
+    --     report "p_frac_inter = 0b" & to_string(p_frac_inter);
+    -- end process;
 
     p(N - 1) <= p_sign;
     p(N - 2 downto NP) <= p_exp(E - 1 downto 0);

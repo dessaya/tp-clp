@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
 
 -- https://www.electricaltechnology.org/wp-content/uploads/2018/05/schematic-of-4x4-multiplier-using-4-bit-full-adders.png
 
@@ -35,7 +36,7 @@ begin
                 cout => ac(i)
             );
 
-        aa(i) <= a and b;
+        aa(i) <= a and b(i);
 
         p(i) <= as(i)(0);
     end generate;
@@ -44,8 +45,20 @@ begin
         ab(i + 1) <= ac(i) & as(i)(N - 1 downto 1);
     end generate;
 
-    ab(1) <= '0' & (a(N - 1 downto 1) and b(N - 1 downto 1));
+    ab(1) <= '0' & (a(N - 1 downto 1) and b(0));
 
     p(0) <= a(0) and b(0);
     p(2 * N - 1 downto N) <= ac(N - 1) & as(N - 1)(N - 1 downto 1);
+
+    process is begin
+        wait for 15 ns;
+        if (p /= (std_logic_vector(unsigned(a) * unsigned(b)))) then
+            report "a = 0b" & to_string(a);
+            report "b = 0b" & to_string(b);
+            report "p = 0b" & to_string(p);
+            report "* = 0b" & to_string(unsigned(a) * unsigned(b));
+            report "";
+        end if;
+        wait for 5 ns;
+    end process;
 end;
