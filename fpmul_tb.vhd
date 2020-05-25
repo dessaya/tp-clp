@@ -26,7 +26,7 @@ architecture fpmul_tb_arq of fpmul_tb is
 	-- La senal z_del_aux se define por un problema de conversión
 	signal z_del_aux: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
 
-	file datos: text open read_mode is "./test-files/test_mul_float_"&to_string(WORD_SIZE_T)&"_"&to_string(EXP_SIZE_T)&"_bin.txt";
+	file datos: text open read_mode is "/home/dessaya/cese/materias/clp/tp/fpmul-vhdl/test-files/test_mul_float_"&integer'image(WORD_SIZE_T)&"_"&integer'image(EXP_SIZE_T)&"_bin.txt";
 
 	-- Declaracion de la linea de retardo
 	component delay_gen is
@@ -57,21 +57,33 @@ begin
             while i >= 0 loop
                 read(l, ch);
                 next when ch /= '1' and ch /= '0';
-                a_file(i) <= '1' when ch = '1' else '0';
+                if ch = '1' then
+                    a_file(i) <= '1';
+                else
+                    a_file(i) <= '0';
+                end if;
                 i := i - 1;
             end loop;
             i := WORD_SIZE_T - 1;
             while i >= 0 loop
                 read(l, ch);
                 next when ch /= '1' and ch /= '0';
-                b_file(i) <= '1' when ch = '1' else '0';
+                if ch = '1' then
+                    b_file(i) <= '1';
+                else
+                    b_file(i) <= '0';
+                end if;
                 i := i - 1;
             end loop;
             i := WORD_SIZE_T - 1;
             while i >= 0 loop
                 read(l, ch);
                 next when ch /= '1' and ch /= '0';
-                z_file(i) <= '1' when ch = '1' else '0';
+                if ch = '1' then
+                    z_file(i) <= '1';
+                else
+                    z_file(i) <= '0';
+                end if;
                 i := i - 1;
             end loop;
 		end loop;
@@ -108,9 +120,9 @@ begin
         report "TEST: " & to_hstring(a_file) & " * " & to_hstring(b_file) & " = " & to_hstring(z_file);
         assert z_del = z_dut report
             "Error: Salida del DUT no coincide con referencia (esperado = " &
-            to_string(z_del) &
+            integer'image(to_integer(unsigned(z_del))) &
             ", dut = " &
-            to_string(z_dut) & ")"
+            integer'image(to_integer(unsigned(z_dut))) & ")"
             severity error;
         if z_del /= z_dut then
             errores <= errores + 1;

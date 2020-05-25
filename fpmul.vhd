@@ -121,7 +121,7 @@ begin
             s => p_exp_plus_1
         );
 
-    normalize: process (p_sign, p_exp_inter, p_frac_inter) is
+    normalize: process (a_sign, b_sign, p_exp_inter, p_exp_plus_1, p_frac_inter) is
     begin
         -- p_exp_inter is (E downto 0) (must discard one bit)
         -- p_frac_inter is (2NP + 1 downto 0) (must discard down to NP)
