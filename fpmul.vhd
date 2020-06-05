@@ -83,7 +83,7 @@ begin
     a_frac <= '1' & a(NP - 1 downto 0);
     b_frac <= '1' & b(NP - 1 downto 0);
 
-    -- product of fractions has length 2NP + 2; is either 01.xxx or 10.xxx
+    -- product of fractions has length 2NP + 2; is either 01.xxx or 1x.xxx
     mul: entity work.mul
         generic map (N => NP + 1)
         port map(
