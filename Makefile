@@ -19,11 +19,11 @@ $(OBJ) &: $(FILES)
 $(TEST_ENTITY): $(OBJ)
 	ghdl -e $(GHDL_ARGS) $(TEST_ENTITY)
 
-$(WAVE_FILE): $(TEST_ENTITY)
+test: $(TEST_ENTITY)
 	ghdl -r $(TEST_ENTITY) --vcd=$(WAVE_FILE) --assert-level=error
-	# ghdl -r $(GHDL_ARGS) $(TEST_ENTITY) --vcd=$(WAVE_FILE) --stop-time=360ns
 
-view: $(WAVE_FILE)
+view: $(TEST_ENTITY)
+	ghdl -r $(GHDL_ARGS) $(TEST_ENTITY) --vcd=$(WAVE_FILE) --stop-time=360ns
 	gtkwave $(WAVE_FILE)
 
 clean:

@@ -10,8 +10,8 @@ end entity fpmul_tb;
 architecture fpmul_tb_arq of fpmul_tb is
 	constant TCK: time:= 20 ns; 		-- periodo de reloj
 	constant DELAY: natural:= 0; 		-- retardo de procesamiento del DUT
-	constant WORD_SIZE_T: natural:= 25;	-- tamaño de datos
-	constant EXP_SIZE_T: natural:= 7;   -- tamaño exponente
+	constant WORD_SIZE_T: natural:= 32;	-- tamaño de datos
+	constant EXP_SIZE_T: natural:= 8;   -- tamaño exponente
 
 	signal clk: std_logic:= '0';
 	signal a_file: std_logic_vector(WORD_SIZE_T-1 downto 0):= (others => '0');
