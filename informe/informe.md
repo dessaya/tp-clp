@@ -1,7 +1,7 @@
 ---
 lang: es-AR
 title: Multiplicador de punto flotante
-subtitle: Trabajo práctico final - CESE 10 Cohorte
+subtitle: Trabajo práctico final CLP - CESE 10 Cohorte
 author: Diego Essaya
 ...
 

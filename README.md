@@ -7,3 +7,5 @@ Para ejecutar las simulaciones (Requiere GHDL y GTKWave):
 
 Para correr los tests: `make test` (configurar `WORD_SIZE_T` y `EXP_SIZE_T`
 en `fpmul_tb.vhd`) para utilizar el archivo correspondiente en la carpeta `test-files`.
+
+Presentación: https://docs.google.com/presentation/d/1DSy83k4kNMWb_fBu7IstFsx7bWicQSvUaGacOdMYWCg/edit?usp=sharing
