@@ -1,6 +1,6 @@
-NAME=addern
+NAME=mul
 
-FILES=adder1.vhd $(NAME).vhd $(NAME)_tb.vhd
+FILES=adder1.vhd addern.vhd $(NAME).vhd $(NAME)_tb.vhd
 TEST_ENTITY=$(NAME)_tb
 WAVE_FILE=$(NAME).vcd
 
